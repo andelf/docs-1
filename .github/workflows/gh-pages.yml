@@ -13,9 +13,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: pengx17/logseq-publish@0.0.4
-        with:
-          dest: 'www'
+      - name: Publish to www
+        run: |
+          rm -rvf www
+          curl https://raw.githubusercontent.com/pengx17/logseq-publish/main/Dockerfile.exec -o Dockerfile
+          docker build -t tmp .
+          container_id=$(docker create tmp)
+          docker cp $container_id:/home/logseq/graph-www www
           
       - name: Deploy to docs.logseq.com
         uses: JamesIves/github-pages-deploy-action@4.1.9
